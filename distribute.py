@@ -50,11 +50,8 @@ def main(_):
       if issync == 1:
         #同步模式计算更新梯度
         rep_op = tf.train.SyncReplicasOptimizer(optimizer,
-                                                replicas_to_aggregate=len(
-                                                  worker_hosts),
-                                                replica_id=FLAGS.task_index,
-                                                total_num_replicas=len(
-                                                  worker_hosts),
+                                                replicas_to_aggregate=len(worker_hosts),
+                                                total_num_replicas=len(worker_hosts),
                                                 use_locking=True)
         train_op = rep_op.apply_gradients(grads_and_vars,
                                        global_step=global_step)
@@ -86,7 +83,7 @@ def main(_):
         sv.start_queue_runners(sess, [chief_queue_runner])
         sess.run(init_token_op)
       step = 0
-      while  step < 1000000:
+      while  step < 100000000:
         train_x = np.random.randn(1)
         train_y = 2 * train_x + np.random.randn(1) * 0.33  + 10
         _, loss_v, step = sess.run([train_op, loss_value,global_step], feed_dict={input:train_x, label:train_y})
