@@ -82,15 +82,15 @@ the paramter biasis is the number 10.
 ```
 ps server:
 
-CUDA_VISIBLE_DEVICES='' python distribute.py --ps_hosts=192.168.100.42:2222 --worker_hosts=192.168.100.42:2224,192.168.100.253:2225 --job_name=ps --task_index=0
+CUDA_VISIBLE_DEVICES='' python distribute.py --ps_hosts=0.0.0.0:2222 --worker_hosts=0.0.0.0:2224,0.0.0.0:2225 --job_name=ps --task_index=0
 
 
 
 worker server:
 
-CUDA_VISIBLE_DEVICES=0 python distribute.py --ps_hosts=192.168.100.42:2222 --worker_hosts=192.168.100.42:2224,192.168.100.253:2225 --job_name=worker --task_index=0
+CUDA_VISIBLE_DEVICES=0 python distribute.py --ps_hosts=0.0.0.0:2222 --worker_hosts=0.0.0.0:2224,0.0.0.0:2225 --job_name=worker --task_index=0
 
-CUDA_VISIBLE_DEVICES=0 python distribute.py --ps_hosts=192.168.100.42:2222 --worker_hosts=192.168.100.42:2224,192.168.100.253:2225 --job_name=worker --task_index=1
+CUDA_VISIBLE_DEVICES=0 python distribute.py --ps_hosts=0.0.0.0:2222 --worker_hosts=0.0.0.0:2224,0.0.0.0:2225 --job_name=worker --task_index=1
 
 ```
 
