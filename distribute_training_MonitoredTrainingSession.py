@@ -1,4 +1,10 @@
 # coding=utf-8
+"""
+参考
+网址：https://zhuanlan.zhihu.com/p/35083779
+印象笔记：采用MonitoredTrainingSession进行分布式训练(同步/异步可选)代码示例
+"""
+
 import numpy as np
 import tensorflow as tf
 import time

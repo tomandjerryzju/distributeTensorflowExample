@@ -1,4 +1,10 @@
 # coding=utf-8
+"""
+参考
+网址：http://www.bubuko.com/infodetail-2648351.html
+印象笔记：采用Supervisor进行分布式训练(同步/异步可选)代码示例
+"""
+
 import numpy as np
 import tensorflow as tf
 import time
