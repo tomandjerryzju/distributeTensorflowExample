@@ -41,9 +41,9 @@ def main(_):
         分布式的启动顺序为:ps -> chief worker -> non chief worker。tf中没有提供控制启动顺序的方法，因此必须在代码中
         强制保证这个启动的顺序，否则会报"OS Error"错误。
         """
-        time.sleep(180)
+        time.sleep(5)
         if not is_chief:
-            time.sleep(120)
+            time.sleep(5)
         with tf.device(tf.train.replica_device_setter(worker_device="/job:worker/task:%d" % FLAGS.task_index, cluster=cluster)):
             global_step = tf.Variable(0, name='global_step', trainable=False)
 
