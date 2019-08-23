@@ -136,8 +136,8 @@ def loss(label, pred):
 
 if __name__ == "__main__":
     """
-    python distribute_training_MonitoredTrainingSession.py --job_name=ps --task_index=0 --issync=1
-    python distribute_training_MonitoredTrainingSession.py --job_name=worker --task_index=0 --issync=1
-    python distribute_training_MonitoredTrainingSession.py --job_name=worker --task_index=1 --issync=1
+    python distribute_training_supervisor.py --job_name=ps --task_index=0 --issync=1
+    python distribute_training_supervisor.py --job_name=worker --task_index=0 --issync=1
+    python distribute_training_supervisor.py --job_name=worker --task_index=1 --issync=1
     """
     tf.app.run()
