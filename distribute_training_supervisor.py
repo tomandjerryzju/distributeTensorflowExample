@@ -12,7 +12,7 @@ import time
 # Define parameters
 FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_float('learning_rate', 0.00003, 'Initial learning rate.')
-tf.app.flags.DEFINE_integer('steps_to_validate', 10000, 'Steps to validate and print loss')
+tf.app.flags.DEFINE_integer('steps_to_validate', 100, 'Steps to validate and print loss')
 
 # For distributed
 tf.app.flags.DEFINE_string("ps_hosts", "0.0.0.0:2222", "Comma-separated list of hostname:port pairs")
@@ -73,8 +73,8 @@ def main(_):
 
             init_op = tf.global_variables_initializer()
             saver = tf.train.Saver()
-            tf.summary.scalar('cost', loss_value)
-            summary_op = tf.summary.merge_all()
+            # tf.summary.scalar('cost', loss_value)
+            # summary_op = tf.summary.merge_all()
 
             if issync == 1:
                 sv = tf.train.Supervisor(
@@ -119,13 +119,13 @@ def main(_):
             while step < 100000000:
                 train_x = np.random.randn(1)
                 train_y = 2 * train_x + np.random.randn(1) * 0.33 + 10
-                _, loss_v, step, summaries = sess.run([train_op, loss_value, global_step, summary_op],
+                _, loss_v, step = sess.run([train_op, loss_value, global_step],
                                            feed_dict={input: train_x, label: train_y})
                 if step % steps_to_validate == 0:
                     w, b = sess.run([weight, biase])
                     print("step: %d, weight: %f, biase: %f, loss: %f" % (step, w, b, loss_v))
-                    if is_chief:
-                        sv.summary_computed(sess, summaries)
+                    # if is_chief:
+                    #     sv.summary_computed(sess, summaries)
 
         sv.stop()
 
