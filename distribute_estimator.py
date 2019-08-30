@@ -1,9 +1,9 @@
 # coding=utf-8
 """
 参考
-官方文档1：https://www.tensorflow.org/guide/estimators?hl=zh-CN
-官方文档2：https://www.tensorflow.org/guide/premade_estimators?hl=zh-CN
-示例代码：train_sync_pengchong.py
+官方文档1：https://www.tensorflow.org/guide/estimators?hl=zh-CN  (单机)
+官方文档2：https://www.tensorflow.org/guide/premade_estimators?hl=zh-CN  (单机)
+示例代码：train_sync_pengchong.py    (分布式)
 """
 
 from __future__ import absolute_import
@@ -140,20 +140,25 @@ def main(argv):
                                         params={'feature_columns': my_feature_columns},
                                         config=config)
 
+    """
+    estimator.train/estimator.evaluate/estimator.predict用于单机。同时，单机情况下，需要置issync为1，且不需要运行set_environment。
+    """
     # estimator.train(input_fn=lambda: train_input_fn(train_x, train_y, FLAGS.batch_size))
-
-    train_spec = tf.estimator.TrainSpec(input_fn=lambda: train_input_fn(train_x, train_y, FLAGS.batch_size))
-    eval_spec = tf.estimator.EvalSpec(input_fn=lambda: eval_input_fn(test_x, test_y, FLAGS.batch_size))
-
-    tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)   # 必须指定eval_spec
-
-    # eval_result = classifier.evaluate(input_fn=lambda: eval_input_fn(test_x, test_y, FLAGS.batch_size))
-    #
+    # eval_result = estimator.evaluate(input_fn=lambda: eval_input_fn(test_x, test_y, FLAGS.batch_size))
     # predict_x = {'SepalLength': [5.1, 5.9, 6.9],
     #              'SepalWidth': [3.3, 3.0, 3.1],
     #              'PetalLength': [1.7, 4.2, 5.4],
     #              'PetalWidth': [0.5, 1.5, 2.1]}
-    # predictions = classifier.predict(input_fn=lambda: eval_input_fn(predict_x, labels=None, batch_size=FLAGS.batch_size))
+    # predictions = estimator.predict(input_fn=lambda: eval_input_fn(predict_x, labels=None, batch_size=FLAGS.batch_size))
+
+    """
+    以下用于分布式。
+    """
+    train_spec = tf.estimator.TrainSpec(input_fn=lambda: train_input_fn(train_x, train_y, FLAGS.batch_size))
+    eval_spec = tf.estimator.EvalSpec(input_fn=lambda: eval_input_fn(test_x, test_y, FLAGS.batch_size))
+    tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)   # 必须指定eval_spec
+
+
 
 
 if __name__ == '__main__':
