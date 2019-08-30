@@ -1,4 +1,10 @@
-#coding=utf-8
+# coding=utf-8
+"""
+参考
+官方文档1：https://www.tensorflow.org/guide/estimators?hl=zh-CN
+官方文档2：https://www.tensorflow.org/guide/premade_estimators?hl=zh-CN
+示例代码：train_sync_pengchong.py
+"""
 
 from __future__ import absolute_import
 from __future__ import division
