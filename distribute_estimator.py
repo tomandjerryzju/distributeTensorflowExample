@@ -73,7 +73,10 @@ def load_data(y_name='Species'):
 def train_input_fn(features, labels, batch_size):
     """An input function for training"""
     dataset = tf.data.Dataset.from_tensor_slices((dict(features), labels))
-    dataset = dataset.shuffle(1000).repeat(10000).batch(batch_size)
+    dataset = dataset.shard(len(worker_hosts)-1, FLAGS.task_index)
+    dataset = dataset.repeat(10000)
+    dataset = dataset.shuffle(1000)
+    dataset = dataset.batch(batch_size)
     return dataset
 
 
