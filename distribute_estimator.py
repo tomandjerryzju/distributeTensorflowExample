@@ -39,7 +39,7 @@ def set_environment():
     tf.logging.info("Worker hosts are: {}".format(worker_hosts))
     job_name = FLAGS.job_name
     task_index = FLAGS.task_index
-    cluster = {'chief': [worker_hosts[0]], 'worker': worker_hosts[1:-1], 'ps': ps_hosts}
+    cluster = {'chief': [worker_hosts[0]], 'worker': worker_hosts[1:-1], 'ps': ps_hosts}    # evaluator不需要在cluster中指定
     if job_name == "worker":
         if task_index == 0:
             os.environ['TF_CONFIG'] = json.dumps({'cluster': cluster, 'task': {'type': 'chief', 'index': 0}})
