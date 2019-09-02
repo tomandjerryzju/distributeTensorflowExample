@@ -73,6 +73,7 @@ def load_data(y_name='Species'):
 def train_input_fn(features, labels, batch_size):
     """An input function for training"""
     dataset = tf.data.Dataset.from_tensor_slices((dict(features), labels))
+    # 该指令可以将输入数据分发给各个worker，使得每个worker的输入数据是总数据的子集，且各个worker的输入数据之间不存在交集。
     dataset = dataset.shard(len(worker_hosts)-1, FLAGS.task_index)
     dataset = dataset.repeat(10000)
     dataset = dataset.shuffle(1000)
