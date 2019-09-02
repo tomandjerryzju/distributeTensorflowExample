@@ -4,6 +4,7 @@
 官方文档1：https://www.tensorflow.org/guide/estimators?hl=zh-CN  (单机)
 官方文档2：https://www.tensorflow.org/guide/premade_estimators?hl=zh-CN  (单机)
 示例代码：train_sync_pengchong.py    (分布式)
+官方文档3：tf.estimator.train_and_evaluate的API说明    (分布式)
 """
 
 from __future__ import absolute_import
@@ -20,7 +21,7 @@ import os
 FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_integer('batch_size', 100, 'batch size.')
 tf.app.flags.DEFINE_string("ps_hosts", "0.0.0.0:2222", "Comma-separated list of hostname:port pairs")
-tf.app.flags.DEFINE_string("worker_hosts", "0.0.0.0:2224,0.0.0.0:2225", "Comma-separated list of hostname:port pairs")
+tf.app.flags.DEFINE_string("worker_hosts", "0.0.0.0:2224,0.0.0.0:2225,0.0.0.0:2226", "Comma-separated list of hostname:port pairs")
 tf.app.flags.DEFINE_string("model_dir", '/Users/hyc/workspace/distributeTensorflowExample/gitignore/model/iris', "model dir")
 tf.app.flags.DEFINE_string("job_name", "", "One of 'ps', 'worker'")
 tf.app.flags.DEFINE_integer("task_index", 0, "Index of task within the job")
@@ -42,9 +43,10 @@ def set_environment():
     if job_name == "worker":
         if task_index == 0:
             os.environ['TF_CONFIG'] = json.dumps({'cluster': cluster, 'task': {'type': 'chief', 'index': 0}})
+        elif task_index > 0 and task_index < len(worker_hosts)-1:
+            os.environ['TF_CONFIG'] = json.dumps({'cluster': cluster, 'task': {'type': 'worker', 'index': task_index - 1}})  # worker的task_index从0开始，与使用Supervisor和MonitoredTrainingSession实现的分布式的worker配置不同
         else:
-            os.environ['TF_CONFIG'] = json.dumps(
-                {'cluster': cluster, 'task': {'type': 'worker', 'index': task_index - 1}})  # worker的task_index从0开始，与使用Supervisor和MonitoredTrainingSession实现的分布式的worker配置不同
+            os.environ['TF_CONFIG'] = json.dumps({"cluster": cluster, "task": {"type": "evaluator", "index": 0}})
     elif job_name == "ps":
         os.environ['TF_CONFIG'] = json.dumps({'cluster': cluster, 'task': {'type': 'ps', 'index': task_index}})
 
@@ -115,7 +117,7 @@ def model_fn(features, labels, mode, params):
             is_chief=False
         if FLAGS.issync == 1:
             print("同步模式")
-            opt = tf.train.SyncReplicasOptimizer(opt, replicas_to_aggregate=len(worker_hosts), total_num_replicas=len(worker_hosts))
+            opt = tf.train.SyncReplicasOptimizer(opt, replicas_to_aggregate=len(worker_hosts)-1, total_num_replicas=len(worker_hosts)-1)
             train_hooks.append(opt.make_session_run_hook(is_chief))
         else:
             print("异步模式")
@@ -152,7 +154,7 @@ def main(argv):
     # predictions = estimator.predict(input_fn=lambda: eval_input_fn(predict_x, labels=None, batch_size=FLAGS.batch_size))
 
     """
-    以下用于分布式。
+    以下既可用于分布式，也可用于单机，唯一区别在于是否运行set_environment，见tf.estimator.train_and_evaluate的API说明。
     """
     train_spec = tf.estimator.TrainSpec(input_fn=lambda: train_input_fn(train_x, train_y, FLAGS.batch_size))
     eval_spec = tf.estimator.EvalSpec(input_fn=lambda: eval_input_fn(test_x, test_y, FLAGS.batch_size))
