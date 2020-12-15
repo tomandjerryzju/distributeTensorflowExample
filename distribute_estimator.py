@@ -59,8 +59,8 @@ worker_hosts = set_environment()
 
 
 def load_data(y_name='Species'):
-    train_path = "/Users/hyc/workspace/distributeTensorflowExample/gitignore/dataset/iris_test.csv"
-    test_path = "/Users/hyc/workspace/distributeTensorflowExample/gitignore/dataset/iris_training.csv"
+    train_path = "/Users/hyc/workspace/distributeTensorflowExample/gitignore/dataset/iris_training.csv"
+    test_path = "/Users/hyc/workspace/distributeTensorflowExample/gitignore/dataset/iris_test.csv"
 
     train = pd.read_csv(train_path, names=CSV_COLUMN_NAMES, header=0)
     train_x, train_y = train, train.pop(y_name)
